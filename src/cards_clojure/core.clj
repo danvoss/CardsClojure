@@ -22,11 +22,18 @@
   (let [suits (set (map :suit hand))]
     (= 1 (count suits))))
 
+(comment
+  (defn straight? [hand]
+    (let [ranks (vec (sort (map :rank hand)))]
+      (and (= 1 (- (get ranks 3) (get ranks 2)))
+           (= 1 (- (get ranks 2) (get ranks 1)))
+           (= 1 (- (get ranks 1) (get ranks 0)))))))
+
 (defn straight? [hand]
-  (let [ranks (vec (sort (map :rank hand)))]
-    (and (= 1 (- (get ranks 3) (get ranks 2)))
-         (= 1 (- (get ranks 2) (get ranks 1)))
-         (= 1 (- (get ranks 1) (get ranks 0))))))
+  (let [ranks (sort (map :rank hand))
+        first-rank (first ranks)
+        new-ranks (range first-rank (+ 4 first-rank))]
+    (= ranks new-ranks)))
 
 (defn straight-flush? [hand]
   (and (flush? hand) (straight? hand)))
@@ -37,7 +44,7 @@
 
 (defn three-of-a-kind? [hand]
   (let [ranks (map :rank hand)]
-    (= '(1 3) vals (frequencies ranks))))
+    (contains? (set (vals (frequencies ranks))) 3)))
     
 (defn two-pair? [hand]
   (let [ranks (map :rank hand)]
