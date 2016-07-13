@@ -22,8 +22,29 @@
   (let [suits (set (map :suit hand))]
     (= 1 (count suits))))
 
+(defn straight? [hand]
+  (let [ranks (vec (sort (map :rank hand)))]
+    (and (= 1 (- (get ranks 3) (get ranks 2)))
+         (= 1 (- (get ranks 2) (get ranks 1)))
+         (= 1 (- (get ranks 1) (get ranks 0))))))
+
+(defn straight-flush? [hand]
+  (and (flush? hand) (straight? hand)))
+      
+(defn four-of-a-kind? [hand]
+  (let [ranks (set (map :rank hand))]
+    (= 1 (count ranks))))
+
+(defn three-of-a-kind? [hand]
+  (let [ranks (map :rank hand)]
+    (= '(1 3) vals (frequencies ranks))))
+    
+(defn two-pair? [hand]
+  (let [ranks (map :rank hand)]
+    (= 2 (count (filter #(= 2 %) (vals (frequencies ranks)))))))
+  
 (defn -main []
   (let [deck (create-deck)
         hands (create-hands deck)
-        flushes (filter flush? hands)]
-    (count flushes)))
+        two-pairs (filter two-pair? hands)]
+    (count two-pairs)))
